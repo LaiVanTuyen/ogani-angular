@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -11,18 +11,21 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
-    // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
-    setTimeout(() => {
-      this.initializeMenus();
-    }, 0);
+    // Only run client-side code when in browser environment
+    if (isPlatformBrowser(this.platformId)) {
+      // Using setTimeout to ensure JavaScript runs after DOM is loaded
+      setTimeout(() => {
+        this.initializeMenus();
+      }, 0);
+    }
   }
 
   initializeMenus() {
     if (typeof window !== 'undefined') {
-      // Kiểm tra xem jQuery đã được định nghĩa chưa
+      // Check if jQuery is defined
       if (typeof (window as any).$ !== 'undefined') {
         const $ = (window as any).$;
 

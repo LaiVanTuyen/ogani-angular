@@ -1,23 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {LatestProductSliderComponent} from "../../shared/latest-product-slider/latest-product-slider.component";
+import {ProductDiscountSliderComponent} from "../../shared/product-discount-slider/product-discount-slider.component";
+import {FooterComponent} from "../../shared/footer/footer.component";
+import {HeaderComponent} from "../../shared/header/header.component";
 
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LatestProductSliderComponent, ProductDiscountSliderComponent, LatestProductSliderComponent, ProductDiscountSliderComponent, FooterComponent, HeaderComponent],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.scss']
 })
 export class ShopComponent implements OnInit {
 
-  constructor() { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
-    // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
-    setTimeout(() => {
-      this.initializeShopJS();
-    }, 0);
+    if (isPlatformBrowser(this.platformId)) {
+      // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
+      setTimeout(() => {
+        this.initializeShopJS();
+      }, 0);
+    }
   }
 
   initializeShopJS(): void {
@@ -40,49 +46,6 @@ export class ShopComponent implements OnInit {
         $('#minamount').val('$' + $('.price-range').slider("values", 0));
         $('#maxamount').val('$' + $('.price-range').slider("values", 1));
       }
-
-      // Product Discount Slider
-      if ($('.product__discount__slider').length) {
-        $('.product__discount__slider').owlCarousel({
-          loop: true,
-          margin: 0,
-          items: 3,
-          dots: true,
-          smartSpeed: 1200,
-          autoplay: true,
-          autoplayTimeout: 1500,
-          responsive: {
-            320: {
-              items: 1,
-            },
-            480: {
-              items: 2,
-            },
-            768: {
-              items: 2,
-            },
-            992: {
-              items: 3,
-            }
-          }
-        });
-      }
-
-      // Latest Product Slider
-      if ($('.latest-product__slider').length) {
-        $('.latest-product__slider').owlCarousel({
-          loop: true,
-          margin: 0,
-          items: 1,
-          dots: false,
-          nav: true,
-          navText: ["<span class='fa fa-angle-left'></span>", "<span class='fa fa-angle-right'></span>"],
-          smartSpeed: 1200,
-          autoHeight: false,
-          autoplay: true
-        });
-      }
     }
   }
 }
-

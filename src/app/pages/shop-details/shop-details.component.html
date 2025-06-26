@@ -1,4 +1,4 @@
-<p>shop-details works!</p>
+<app-header></app-header>
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section" style="background-image: url('assets/img/breadcrumb.jpg');">
     <div class="container">
@@ -24,20 +24,7 @@
         <div class="row">
             <div class="col-lg-6 col-md-6">
                 <div class="product__details__pic">
-                    <div class="product__details__pic__item">
-                        <img class="product__details__pic__item--large"
-                            src="assets/img/product/details/product-details-1.jpg" alt="">
-                    </div>
-                    <div class="product__details__pic__slider owl-carousel">
-                        <img data-imgbigurl="assets/img/product/details/product-details-2.jpg"
-                            src="assets/img/product/details/thumb-1.jpg" alt="">
-                        <img data-imgbigurl="assets/img/product/details/product-details-3.jpg"
-                            src="assets/img/product/details/thumb-2.jpg" alt="">
-                        <img data-imgbigurl="assets/img/product/details/product-details-5.jpg"
-                            src="assets/img/product/details/thumb-3.jpg" alt="">
-                        <img data-imgbigurl="assets/img/product/details/product-details-4.jpg"
-                            src="assets/img/product/details/thumb-4.jpg" alt="">
-                    </div>
+                  <app-product-details-pic-slider></app-product-details-pic-slider>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6">
@@ -142,18 +129,61 @@
                         </div>
                         <div class="tab-pane" id="tabs-3" role="tabpanel">
                             <div class="product__details__tab__desc">
-                                <h6>Products Infomation</h6>
-                                <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
-                                    Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus.
-                                    Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam
-                                    sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo
-                                    eget malesuada. Vivamus suscipit tortor eget felis porttitor volutpat.
-                                    Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Praesent
-                                    sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ac
-                                    diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ante
-                                    ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-                                    Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
-                                    Proin eget tortor risus.</p>
+                                <h6>1 review for "Vegetable Package"</h6>
+                                <div class="product__details__tab__review mb-4">
+                                    <div class="review__item d-flex">
+                                        <div class="review__item__pic mr-3">
+                                            <img src="assets/img/latest-product/lp-1.jpg" alt="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                                        </div>
+                                        <div class="review__item__text">
+                                            <h6>John Doe - <span>26/06/2025</span></h6>
+                                            <div class="product__details__rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-half-o"></i>
+                                            </div>
+                                            <p>The product is excellent, I am very satisfied with the quality of the vegetables. Fast delivery and careful packaging. Will definitely buy again.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="review-form">
+                                    <h4>Leave Your Review</h4>
+                                    <p>Your email address will not be published. Required fields are marked *</p>
+                                    <form action="#">
+                                        <div class="form-group">
+                                            <label>Your Rating *</label>
+                                            <div class="rating" (mouseleave)="resetRating()">
+                                                <i *ngFor="let i of [1, 2, 3, 4, 5]"
+                                                   class="fa"
+                                                   [ngClass]="(hoveredRating || rating) >= i ? 'fa-star' : 'fa-star-o'"
+                                                   (mouseenter)="hoverRating(i)"
+                                                   (click)="setRating(i)"></i>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="review">Your Comment *</label>
+                                            <textarea id="review" class="form-control" rows="5"></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Name *</label>
+                                                    <input id="name" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="email">Email *</label>
+                                                    <input id="email" type="email" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="primary-btn">SUBMIT</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -239,3 +269,4 @@
     </div>
 </section>
 <!-- Related Product Section End -->
+<app-footer></app-footer>

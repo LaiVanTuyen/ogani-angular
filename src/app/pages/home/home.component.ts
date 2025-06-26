@@ -1,71 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import {HeaderComponent} from "../../shared/header/header.component";
+import {FooterComponent} from "../../shared/footer/footer.component";
+import { CategoriesSliderComponent } from '../../shared/categories-slider/categories-slider.component';
+import { FeaturedProductComponent } from '../../shared/featured-product/featured-product.component';
+import {
+  HomeLatestProductSliderComponent
+} from "../../shared/home-latest-product-slider/home-latest-product-slider.component";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeaderComponent, FooterComponent, CategoriesSliderComponent, FeaturedProductComponent, HomeLatestProductSliderComponent, HomeLatestProductSliderComponent, RouterLink],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
-    // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
-    setTimeout(() => {
-      this.initializeHomeJS();
-    }, 0);
+    if (isPlatformBrowser(this.platformId)) {
+      // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
+      setTimeout(() => {
+        this.initializeHomeJS();
+      }, 0);
+    }
   }
 
   initializeHomeJS() {
-    if (typeof window !== 'undefined') {
       const $ = (window as any).$;
-      const owlCarousel = (window as any).owlCarousel;
-
-      // Categories Slider
-      if ($('.categories__slider').length) {
-        $('.categories__slider').owlCarousel({
-          loop: true,
-          margin: 0,
-          items: 4,
-          dots: false,
-          nav: true,
-          navText: ["<span class='fa fa-angle-left'></span>", "<span class='fa fa-angle-right'></span>"],
-          animateOut: 'fadeOut',
-          animateIn: 'fadeIn',
-          smartSpeed: 1200,
-          autoHeight: false,
-          autoplay: true,
-          responsive: {
-            0: {
-              items: 1,
-            },
-            480: {
-              items: 2,
-            },
-            768: {
-              items: 3,
-            },
-            992: {
-              items: 4,
-            }
-          }
-        });
+      if (isPlatformBrowser(this.platformId)) {
+          $('.hero__categories__all').on('click', function(){
+              $('.hero__categories ul').slideToggle(400);
+          });
       }
-
-      // Featured products filter
-      if ($('.featured__controls').length) {
-        const mixer = (window as any).mixitup('.featured__filter', {
-          selectors: {
-            target: '.mix'
-          },
-          animation: {
-            duration: 300
-          }
-        });
-      }
-    }
   }
 }

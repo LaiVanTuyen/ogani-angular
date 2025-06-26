@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {HeaderComponent} from "../../shared/header/header.component";
+import {FooterComponent} from "../../shared/footer/footer.component";
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })

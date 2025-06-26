@@ -8,11 +8,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, CommonModule, FooterComponent, HeaderComponent],
-  template: `
-    <app-header></app-header>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  `
+  templateUrl: './app.component.html',
 })
 export class AppComponent {
   title = 'ogani-angular';

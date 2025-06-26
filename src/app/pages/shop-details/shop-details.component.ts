@@ -1,23 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {HeaderComponent} from "../../shared/header/header.component";
+import {FooterComponent} from "../../shared/footer/footer.component";
+import {
+  ProductDetailsPicSliderComponent
+} from "../../shared/product-details-pic-slider/product-details-pic-slider.component";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-shop-details',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HeaderComponent, FooterComponent, ProductDetailsPicSliderComponent, FormsModule],
   templateUrl: './shop-details.component.html',
-  styleUrls: ['./shop-details.component.scss']
+  styleUrls: ['./shop-details.component.scss'],
+  host: {
+    'ngSkipHydration': 'true',
+  }
 })
-export class ShopDetailsComponent implements OnInit {
+export class ShopDetailsComponent implements OnInit, AfterViewInit {
+  rating: number = 0;
+  hoveredRating: number = 0;
 
-  constructor() { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
-    // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
-    setTimeout(() => {
+  }
+
+  setRating(rating: number): void {
+    this.rating = rating;
+  }
+
+  hoverRating(rating: number): void {
+    this.hoveredRating = rating;
+  }
+
+  resetRating(): void {
+    this.hoveredRating = 0;
+  }
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
       this.initializeShopDetailsJS();
-    }, 0);
+    }
   }
 
   initializeShopDetailsJS(): void {
@@ -90,4 +115,3 @@ export class ShopDetailsComponent implements OnInit {
     }
   }
 }
-

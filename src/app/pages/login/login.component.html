@@ -1,0 +1,70 @@
+<app-header></app-header>
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" style="background-image: url('assets/img/breadcrumb.jpg');">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Login</h2>
+                    <div class="breadcrumb__option">
+                        <a routerLink="/">Home</a>
+                        <span>Login</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Login Section Begin -->
+<section class="login-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="login__form">
+                    <h3>Welcome Back</h3>
+                    <form (ngSubmit)="onSubmit()">
+                        <div class="alert alert-danger" *ngIf="errorMessage">
+                            {{ errorMessage }}
+                        </div>
+                        <div class="input-group">
+                            <input type="text" placeholder="Email Address" [(ngModel)]="email" name="email" required>
+                            <span class="input-group-icon"><i class="fa fa-envelope"></i></span>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
+                            <span class="input-group-icon"><i class="fa fa-lock"></i></span>
+                        </div>
+                        <div class="remember-forgot">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">
+                                    <span>Remember Me</span>
+                                </label>
+                            </div>
+                            <a href="#" class="forgot-link">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="site-btn" [disabled]="loading">
+                            {{ loading ? 'Logging in...' : 'LOGIN' }}
+                        </button>
+                    </form>
+                    <div class="login__register">
+                        <h3>Don't Have An Account?</h3>
+                        <a href="#" class="register-link">Register Now</a>
+                    </div>
+                    <div class="login__social">
+                        <div class="login__social__links">
+                            <a href="#" class="facebook"><i class="fa fa-facebook"></i> Sign in With Facebook</a>
+                            <a href="#" class="google"><i class="fa fa-google"></i> Sign in With Google</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Login Section End -->
+
+<app-footer></app-footer>

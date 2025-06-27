@@ -10,12 +10,17 @@
             <i class="fa fa-bars"></i>
             <span>All departments</span>
           </div>
-          <ul>
-            <li><a href="#">Fresh Fruit</a></li>
-            <li><a href="#">Dried Fruit</a></li>
-            <li><a href="#">Vegetables</a></li>
-            <li><a href="#">Drink Fruits</a></li>
-            <li><a href="#">Meat</a></li>
+<!--          <ul>-->
+<!--            <li><a href="#">Fresh Fruit</a></li>-->
+<!--            <li><a href="#">Dried Fruit</a></li>-->
+<!--            <li><a href="#">Vegetables</a></li>-->
+<!--            <li><a href="#">Drink Fruits</a></li>-->
+<!--            <li><a href="#">Meat</a></li>-->
+<!--          </ul>-->
+          <ul class="hero__categories__menu">
+            <li *ngFor="let category of categories">
+              <a [routerLink]="['/shop']" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
+            </li>
           </ul>
         </div>
       </div>

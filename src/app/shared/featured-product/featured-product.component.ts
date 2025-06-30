@@ -1,5 +1,10 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import {Category} from "../../models/category";
+import {CategoryService} from "../../services/category.service";
+import {map} from "rxjs/operators";
+import {Product} from "../../models/product";
+import {ProductService} from "../../services/product.service";
 
 declare var $: any;
 
@@ -10,8 +15,26 @@ declare var $: any;
   templateUrl: './featured-product.component.html'
 })
 export class FeaturedProductComponent implements OnInit {
+  /**
+   * Mảng lưu trữ dữ liệu danh mục, sản phẩm được lấy từ API
+   */
+  categories: Category[] = []; // Dữ liệu động từ categoryService
+  products: Product[] = [];
+  currentPage = 1;
+  pageSize = 12;
+  totalPages = 1;
+  totalProducts = 0;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  /**
+   * Constructor tiêm các service và thông tin nền tảng cần thiết
+   * @param platformId - Dùng để kiểm tra xem code có đang chạy trong trình duyệt không
+   * @param categoryService - Service để lấy dữ liệu danh mục từ API
+   */
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private categoryService: CategoryService,
+    private productService: ProductService) { }
+
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -19,6 +42,10 @@ export class FeaturedProductComponent implements OnInit {
         this.initializeMixItUp();
       }, 0);
     }
+    // Lấy dữ liệu danh mục (trang 0, giới hạn 100)
+    this.getCategories(0, 100);
+    // Lấy dữ liệu sản phẩm (trang 0, giới hạn 12)
+    this.getProducts();
   }
 
   initializeMixItUp(): void {
@@ -38,5 +65,66 @@ export class FeaturedProductComponent implements OnInit {
         $(event.currentTarget).addClass('active');
       });
     }
+  }
+
+  /**
+   * Định dạng tên danh mục thành định dạng 'fresh-fruit'
+   * @param name - Tên danh mục gốc
+   * @returns Tên danh mục đã định dạng
+   */
+  private formatCategoryName(name: string): string {
+    return name.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  /**
+   * Lấy danh mục từ API và xử lý URL hình ảnh của chúng
+   * Sử dụng RxJS pipe và map để biến đổi luồng dữ liệu
+   *
+   * @param page - Số trang cho phân trang
+   * @param limit - Số lượng mục trên mỗi trang
+   */
+  private getCategories(page: number, limit: number): void {
+    this.categoryService.getCategories(page, limit).pipe(
+      // Biến đổi mỗi danh mục để định dạng URL hình ảnh
+      map((categories: Category[]) => categories.map(category => ({
+        ...category,  // Giữ tất cả thuộc tính hiện có của danh mục
+        formattedName: this.formatCategoryName(category.name) // Định dạng tên danh mục
+      })))
+    ).subscribe({
+      // Xử lý phản hồi thành công
+      next: (categories: Category[]) => {
+        this.categories = categories;  // Cập nhật mảng danh mục của component
+      },
+      // Xử lý lỗi
+      error: (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    });
+  }
+
+  getProducts(): void {
+    this.productService.getProducts('', 0, this.currentPage, this.pageSize).subscribe({
+      next: (products: any) => {
+        // Nếu API trả về tổng số sản phẩm và phân trang, hãy cập nhật lại ở đây
+        this.products = products.items || products; // Nếu API trả về { items, total }
+        this.totalProducts = products.total || products.length;
+        this.totalPages = Math.ceil(this.totalProducts / this.pageSize);
+      },
+      error: (error) => {
+        console.error('Error fetching products:', error);
+      }
+    });
+  }
+
+  changePage(page: number, event: Event): void {
+    event.preventDefault();
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.getProducts();
+  }
+
+  getProductCategoryClasses(product: Product): string {
+    const category = this.categories.find(c => c.id === product.category_id);
+    return category ? category.formattedName : '';
   }
 }

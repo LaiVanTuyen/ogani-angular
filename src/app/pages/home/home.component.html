@@ -19,7 +19,7 @@
 <!--          </ul>-->
           <ul class="hero__categories__menu">
             <li *ngFor="let category of categories">
-              <a [routerLink]="['/shop']" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
+              <a [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
             </li>
           </ul>
         </div>

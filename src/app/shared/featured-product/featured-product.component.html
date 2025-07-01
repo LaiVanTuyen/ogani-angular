@@ -18,7 +18,7 @@
     <div class="row featured__filter">
       <div *ngFor="let product of products" class="col-lg-3 col-md-4 col-sm-6 mix {{ getProductCategoryClasses(product) }}">
         <div class="featured__item">
-          <div class="featured__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}">
+          <div class="featured__item__pic" [ngStyle]="{'background-image': 'url(' + getProductImageUrl(product) + ')'}">
             <ul class="featured__item__pic__hover">
               <li><a href="#"><i class="fa fa-heart"></i></a></li>
               <li><a href="#"><i class="fa fa-retweet"></i></a></li>
@@ -32,18 +32,18 @@
         </div>
       </div>
     </div>
-    <nav class="shop-pagination d-flex justify-content-center mt-4">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" href="#" (click)="changePage(currentPage - 1, $event)">Previous</a>
-        </li>
-        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="currentPage === (i+1)">
-          <a class="page-link" href="#" (click)="changePage(i+1, $event)">{{ i+1 }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <a class="page-link" href="#" (click)="changePage(currentPage + 1, $event)">Next</a>
-        </li>
-      </ul>
-    </nav>
+<!--    <nav class="shop-pagination d-flex justify-content-center mt-4">-->
+<!--      <ul class="pagination">-->
+<!--        <li class="page-item" [class.disabled]="currentPage === 1">-->
+<!--          <a class="page-link" href="#" (click)="changePage(currentPage - 1, $event)">Previous</a>-->
+<!--        </li>-->
+<!--        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="currentPage === (i+1)">-->
+<!--          <a class="page-link" href="#" (click)="changePage(i+1, $event)">{{ i+1 }}</a>-->
+<!--        </li>-->
+<!--        <li class="page-item" [class.disabled]="currentPage === totalPages">-->
+<!--          <a class="page-link" href="#" (click)="changePage(currentPage + 1, $event)">Next</a>-->
+<!--        </li>-->
+<!--      </ul>-->
+<!--    </nav>-->
   </div>
 </section>

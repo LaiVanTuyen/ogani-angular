@@ -40,4 +40,20 @@ export class ProductService {
     return this.http.get<Product[]>(`${this.apiBaseUrl}/products/by-ids`, { params });
   }
 
+  // Lấy danh sách sản phẩm nổi bật
+  getFeaturedProducts(
+    keyword: string,
+    categoryId: number,
+    page: number,
+    limit: number
+  ): Observable<Product[]> {
+    const params = {
+      keyword: keyword,
+      category_id: categoryId.toString(),
+      page: page.toString(),
+      limit: limit.toString()
+    };
+    return this.http.get<Product[]>(`${this.apiBaseUrl}/products/featured`, { params });
+  }
+
 }

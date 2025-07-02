@@ -46,14 +46,14 @@ export class ProductService {
     categoryId: number,
     page: number,
     limit: number
-  ): Observable<Product[]> {
+  ): Observable<any> {
     const params = {
       keyword: keyword,
       category_id: categoryId.toString(),
       page: page.toString(),
       limit: limit.toString()
     };
-    return this.http.get<Product[]>(`${this.apiBaseUrl}/products/featured`, { params });
+    return this.http.get<any>(`${this.apiBaseUrl}/products/featured`, { params });
   }
 
 }

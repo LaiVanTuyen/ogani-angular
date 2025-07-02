@@ -8,13 +8,12 @@ import {ProductService} from "../../services/product.service";
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
-declare var $: any;
-
 @Component({
   selector: 'app-featured-product',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './featured-product.component.html'
+  templateUrl: './featured-product.component.html',
+  styleUrls: ['./featured-product.component.scss']
 })
 export class FeaturedProductComponent implements OnInit {
   /**
@@ -23,7 +22,7 @@ export class FeaturedProductComponent implements OnInit {
   categories: Category[] = []; // Dữ liệu động từ categoryService
   products: Product[] = [];
   currentPage = 1;
-  pageSize = 12;
+  pageSize = 8;
   totalPages = 1;
   totalProducts = 0;
   keyword = '';
@@ -42,34 +41,20 @@ export class FeaturedProductComponent implements OnInit {
 
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        this.initializeMixItUp();
-      }, 0);
-    }
     // Lấy dữ liệu danh mục (trang 0, giới hạn 100)
     this.getCategories(0, 100);
     // Lấy dữ liệu sản phẩm (trang 0, giới hạn 12)
-    this.getFeaturedProducts( this.keyword, this.categoryId, this.currentPage, this.pageSize);
+    this.getFeaturedProducts( this.keyword, this.categoryId, this.currentPage - 1, this.pageSize);
   }
 
   initializeMixItUp(): void {
-    if (typeof (window as any).$ !== 'undefined' && (window as any).$('.featured__controls').length) {
-      const $ = (window as any).$;
-      (window as any).mixitup('.featured__filter', {
-        selectors: {
-          target: '.mix'
-        },
-        animation: {
-          duration: 300
-        }
-      });
+    // No-op
+  }
 
-      $('.featured__controls li').on('click', (event: any) => {
-        $('.featured__controls li').removeClass('active');
-        $(event.currentTarget).addClass('active');
-      });
-    }
+  filterByCategory(categoryId: number): void {
+    this.categoryId = categoryId;
+    this.currentPage = 1;
+    this.getFeaturedProducts(this.keyword, this.categoryId, this.currentPage - 1, this.pageSize);
   }
 
   /**
@@ -110,9 +95,10 @@ export class FeaturedProductComponent implements OnInit {
 
   getFeaturedProducts( keyword: string,categoryId: number,page: number,limit: number) {
     this.productService.getFeaturedProducts(keyword,categoryId,page,limit).pipe(
-      //tap(response => console.log('API response:', response)),
+      tap(response => {
+        this.totalPages = response.totalPages;
+      }),
       map((response: any) => {
-        // Giả sử API trả về một đối tượng có thuộc tính 'products' là một mảng
         const products = response.products || [];
         return products.map((product: Product) => {
           const category = this.categories.find(c => c.id === product.category_id);
@@ -130,14 +116,13 @@ export class FeaturedProductComponent implements OnInit {
       }),
       catchError(error => {
         console.error('Error fetching featured products:', error);
-        return of([]); // Trả về một mảng rỗng trong trường hợp lỗi
+        return of([]);
       })
     ).subscribe({
       next: (products: Product[]) => {
         this.products = products;
       },
       error: (error) => {
-        // Lỗi đã được xử lý trong catchError, nhưng vẫn có thể log ở đây nếu cần
         console.error('Subscription error:', error);
       }
     });
@@ -154,5 +139,15 @@ export class FeaturedProductComponent implements OnInit {
     }
     // Nếu không có hình ảnh trong product_images, sử dụng thumbnail
     return product.thumbnail;
+  }
+
+  changePage(page: number, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.getFeaturedProducts(this.keyword, this.categoryId, this.currentPage - 1, this.pageSize);
+    }
   }
 }

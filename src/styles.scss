@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Fix for disabled pagination link text */
+.page-item.disabled .page-link {
+  color: #6c757d !important; /* Use a visible color for disabled text */
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+/* Fix for disappearing pagination text on click */
+.shop-pagination a:active,
+.shop-pagination a:focus {
+  color: #7fad39 !important; /* Ogani theme green color */
+}

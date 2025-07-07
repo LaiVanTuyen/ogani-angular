@@ -56,4 +56,20 @@ export class ProductService {
     return this.http.get<any>(`${this.apiBaseUrl}/products/featured`, { params });
   }
 
+  // lấy danh sách sản phẩm mới nhất
+  getLatestProducts(
+    keyword: string,
+    categoryId: number,
+    page: number,
+    limit: number
+  ): Observable<any> {
+    const params = {
+      keyword: keyword,
+      category_id: categoryId.toString(),
+      page: page.toString(),
+      limit: limit.toString()
+    };
+    return this.http.get<any>(`${this.apiBaseUrl}/products/latest`, { params });
+  }
+
 }

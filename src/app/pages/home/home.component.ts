@@ -4,17 +4,15 @@ import {HeaderComponent} from "../../shared/header/header.component";
 import {FooterComponent} from "../../shared/footer/footer.component";
 import { CategoriesSliderComponent } from '../../shared/categories-slider/categories-slider.component';
 import { FeaturedProductComponent } from '../../shared/featured-product/featured-product.component';
-import {
-  HomeLatestProductSliderComponent
-} from "../../shared/home-latest-product-slider/home-latest-product-slider.component";
 import {Router, RouterLink} from "@angular/router";
 import {CategoryService} from "../../services/category.service";
 import {Category} from "../../models/category";
+import {HomeProductSliderComponent} from "../../shared/home-product-slider/home-product-slider.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, CategoriesSliderComponent, FeaturedProductComponent, HomeLatestProductSliderComponent, HomeLatestProductSliderComponent, RouterLink],
+  imports: [CommonModule, HeaderComponent, FooterComponent, CategoriesSliderComponent, FeaturedProductComponent, HomeProductSliderComponent, RouterLink],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })

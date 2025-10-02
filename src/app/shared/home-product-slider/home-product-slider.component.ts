@@ -10,12 +10,12 @@ import {RouterModule} from "@angular/router";
 declare var $: any;
 
 @Component({
-  selector: 'app-home-latest-product-slider',
+  selector: 'app-home-product-slider',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './home-latest-product-slider.component.html'
+  templateUrl: './home-product-slider.component.html'
 })
-export class HomeLatestProductSliderComponent implements OnInit {
+export class HomeProductSliderComponent implements OnInit {
   /**
    * Mảng lưu trữ dữ liệu sản phẩm được lấy từ API
    */
@@ -37,13 +37,10 @@ export class HomeLatestProductSliderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        this.initializeSlider();
-      }, 0);
-    }
-    if (this.title === 'Latest Products'){
-      this.getLatestProducts(this.keyword, this.categoryId, this.currentPage - 1, this.pageSize);
+    if (this.title === 'Latest Products') {
+      this.fetchProducts(() => this.productService.getLatestProducts(this.keyword, this.categoryId, this.currentPage - 1, this.pageSize));
+    } else if (this.title === 'Top Rated Products') {
+      this.fetchProducts(() => this.productService.getTopRatedProducts(this.currentPage - 1, this.pageSize));
     }
   }
 
@@ -66,31 +63,45 @@ export class HomeLatestProductSliderComponent implements OnInit {
     }
   }
 
-  getLatestProducts(keyword: string, categoryId: number, number: number, pageSize: number) {
-    this.productService.getLatestProducts(keyword, categoryId, number, pageSize).pipe(
+  /**
+   * Hàm xử lý dữ liệu sản phẩm trả về từ API
+   */
+  private formatProducts(products: any[]): Product[] {
+    return products.map((product: Product) => ({
+      ...product,
+      thumbnail: `${environment.apiBaseUrl}/products/images/${product.thumbnail}`,
+      product_images: product.product_images.map(image => ({
+        ...image,
+        image_url: `${environment.apiBaseUrl}/products/images/${image.image_url}`
+      }))
+    }));
+  }
+
+  /**
+   * Hàm dùng chung để lấy và xử lý sản phẩm, sau đó khởi tạo slider
+   */
+  private fetchProducts(apiCall: () => any): void {
+    apiCall().pipe(
       map((response: any) => {
-        const products = response.products || [];
-        return products.map((product: Product) => {
-          return {
-            ...product,
-            thumbnail: `${environment.apiBaseUrl}/products/images/${product.thumbnail}`,
-            product_images: product.product_images.map(image => ({
-              ...image,
-              image_url: `${environment.apiBaseUrl}/products/images/${image.image_url}`
-            }))
-          };
-        });
+        // console.log('API response:', response); // Bỏ log nếu không cần debug
+        const products = Array.isArray(response) ? response : (response.products || []);
+        return this.formatProducts(products);
       }),
-      catchError(error => {
-        console.error('Error fetching featured products:', error);
+      catchError((error: any) => {
+        console.error('Error fetching products:', error);
         return of([]);
       })
     ).subscribe({
       next: (products: Product[]) => {
         this.products = products;
         this.productGroups = this.groupProducts(this.products, 3);
+        if (isPlatformBrowser(this.platformId)) {
+          setTimeout(() => {
+            this.initializeSlider();
+          }, 0);
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Subscription error:', error);
       }
     });

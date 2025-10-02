@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Product } from '../models/product';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {Product} from '../models/product';
 
 
 @Injectable({
@@ -11,7 +11,8 @@ import { Product } from '../models/product';
 export class ProductService {
   private apiBaseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   // Lấy danh sách sản phẩm theo từ khóa, danh mục, phân trang và giới hạn số lượng
   getProducts(
@@ -26,7 +27,7 @@ export class ProductService {
       page: page.toString(),
       limit: limit.toString()
     };
-    return this.http.get<Product[]>(`${this.apiBaseUrl}/products`, { params });
+    return this.http.get<Product[]>(`${this.apiBaseUrl}/products`, {params});
   }
 
   // Lấy chi tiết một sản phẩm theo ID
@@ -37,7 +38,7 @@ export class ProductService {
   // Lấy danh sách sản phẩm theo mảng ID
   getProductsByIds(productIds: number[]): Observable<Product[]> {
     const params = new HttpParams().set('ids', productIds.join(','));
-    return this.http.get<Product[]>(`${this.apiBaseUrl}/products/by-ids`, { params });
+    return this.http.get<Product[]>(`${this.apiBaseUrl}/products/by-ids`, {params});
   }
 
   // Lấy danh sách sản phẩm nổi bật
@@ -53,7 +54,7 @@ export class ProductService {
       page: page.toString(),
       limit: limit.toString()
     };
-    return this.http.get<any>(`${this.apiBaseUrl}/products/featured`, { params });
+    return this.http.get<any>(`${this.apiBaseUrl}/products/featured`, {params});
   }
 
   // lấy danh sách sản phẩm mới nhất
@@ -69,7 +70,22 @@ export class ProductService {
       page: page.toString(),
       limit: limit.toString()
     };
-    return this.http.get<any>(`${this.apiBaseUrl}/products/latest`, { params });
+
+    console.log('API URL:', `${this.apiBaseUrl}/products/latest`);
+    console.log('Params:', params);
+    return this.http.get<any>(`${this.apiBaseUrl}/products/latest`, {params});
+  }
+
+  // Lấy danh sách sản phẩm được đánh giá cao
+  getTopRatedProducts(
+    page: number,
+    limit: number
+  ): Observable<any> {
+    const params = {
+      page: page.toString(),
+      limit: limit.toString()
+    };
+    return this.http.get<any>(`${this.apiBaseUrl}/products/top-rated`, {params});
   }
 
 }

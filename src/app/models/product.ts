@@ -1,4 +1,5 @@
-import { ProductImage } from "./product.image";
+import {ProductImage} from "./product.image";
+
 export interface Product {
   id: number;
   name: string;
@@ -8,7 +9,7 @@ export interface Product {
   category_id: number;
   url: string;
   product_images: ProductImage[];
+  actualSalePercent?: number;
 }
 
-  
-  
+

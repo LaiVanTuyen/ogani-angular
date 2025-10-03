@@ -3,12 +3,22 @@
   <div class="latest-product__slider owl-carousel">
     <div class="latest-prdouct__slider__item" *ngFor="let group of productGroups">
       <a *ngFor="let product of group" routerLink="/shop-details/{{product.id}}" class="latest-product__item">
-        <div class="latest-product__item__pic">
-          <img [src]="product.thumbnail" alt="">
+        <div class="latest-product__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}">
+          <div *ngIf="product.actualSalePercent" class="product__discount__percent">
+            -{{ product.actualSalePercent }}%
+          </div>
         </div>
         <div class="latest-product__item__text">
           <h6>{{ product.name }}</h6>
-          <span>{{ product.price | currency:'USD' }}</span>
+          <span *ngIf="product.actualSalePercent; else noDiscount">
+            {{ (product.price * (1 - product.actualSalePercent / 100)) | currency:'USD' }}
+            <span style="text-decoration: line-through; color: #888; font-size: 13px; margin-left: 4px;">
+              {{ product.price | currency:'USD' }}
+            </span>
+          </span>
+          <ng-template #noDiscount>
+            <span>{{ product.price | currency:'USD' }}</span>
+          </ng-template>
         </div>
       </a>
     </div>

@@ -19,14 +19,22 @@ export class ProductService {
     keyword: string,
     categoryId: number,
     page: number,
-    limit: number
+    limit: number,
+    sortBy?: string,
+    sortDir?: string
   ): Observable<Product[]> {
-    const params = {
-      keyword: keyword,
-      category_id: categoryId.toString(),
-      page: page.toString(),
-      limit: limit.toString()
-    };
+    let params = new HttpParams()
+      .set('keyword', keyword)
+      .set('category_id', categoryId.toString())
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    if (sortBy) {
+      params = params.set('sort_by', sortBy);
+    }
+    if (sortDir) {
+      params = params.set('sort_dir', sortDir);
+    }
     return this.http.get<Product[]>(`${this.apiBaseUrl}/products`, {params});
   }
 
@@ -86,6 +94,18 @@ export class ProductService {
       limit: limit.toString()
     };
     return this.http.get<any>(`${this.apiBaseUrl}/products/top-rated`, {params});
+  }
+
+  // Lấy danh sách sản phẩm bán chạy nhất
+  getTopSalesProducts(
+    page: number,
+    limit: number
+  ): Observable<any> {
+    const params = {
+      page: page.toString(),
+      limit: limit.toString()
+    };
+    return this.http.get<any>(`${this.apiBaseUrl}/products/top-sales`, {params});
   }
 
 }

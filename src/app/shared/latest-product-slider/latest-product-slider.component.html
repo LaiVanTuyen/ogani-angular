@@ -1,61 +1,23 @@
 <div class="latest-product__slider owl-carousel">
-    <div class="latest-prdouct__slider__item">
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-1.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-2.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-3.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-    </div>
-    <div class="latest-prdouct__slider__item">
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-1.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-2.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-        <a href="#" class="latest-product__item">
-            <div class="latest-product__item__pic">
-                <img src="assets/img/latest-product/lp-3.jpg" alt="">
-            </div>
-            <div class="latest-product__item__text">
-                <h6>Crab Pool Security</h6>
-                <span>$30.00</span>
-            </div>
-        </a>
-    </div>
+  <div class="latest-prdouct__slider__item" *ngFor="let group of productGroups">
+    <a *ngFor="let product of group" routerLink="/product/{{product.id}}" class="latest-product__item">
+      <div class="latest-product__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}">
+        <div *ngIf="product.actualSalePercent" class="product__discount__percent">
+          -{{ product.actualSalePercent }}%
+        </div>
+      </div>
+      <div class="latest-product__item__text">
+        <h6>{{ product.name }}</h6>
+        <span *ngIf="product.actualSalePercent; else noDiscount">
+          {{ (product.price * (1 - product.actualSalePercent / 100)) | currency:'USD' }}
+          <span style="text-decoration: line-through; color: #888; font-size: 13px; margin-left: 4px;">
+            {{ product.price | currency:'USD' }}
+          </span>
+        </span>
+        <ng-template #noDiscount>
+          <span>{{ product.price | currency:'USD' }}</span>
+        </ng-template>
+      </div>
+    </a>
+  </div>
 </div>
-

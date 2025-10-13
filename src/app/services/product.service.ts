@@ -21,7 +21,9 @@ export class ProductService {
     page: number,
     limit: number,
     sortBy?: string,
-    sortDir?: string
+    sortDir?: string,
+    minPrice?: number | null,
+    maxPrice?: number | null
   ): Observable<Product[]> {
     let params = new HttpParams()
       .set('keyword', keyword)
@@ -34,6 +36,12 @@ export class ProductService {
     }
     if (sortDir) {
       params = params.set('sort_dir', sortDir);
+    }
+    if (minPrice != null) {
+      params = params.set('min_price', String(minPrice));
+    }
+    if (maxPrice != null) {
+      params = params.set('max_price', String(maxPrice));
     }
     return this.http.get<Product[]>(`${this.apiBaseUrl}/products`, {params});
   }

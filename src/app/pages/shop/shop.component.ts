@@ -1,6 +1,6 @@
 import {Component, OnInit, Inject, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser, CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {RouterLink, Router, ActivatedRoute} from '@angular/router';
 import {LatestProductSliderComponent} from "../../shared/latest-product-slider/latest-product-slider.component";
 import {ProductDiscountSliderComponent} from "../../shared/product-discount-slider/product-discount-slider.component";
 import {FooterComponent} from "../../shared/footer/footer.component";
@@ -12,6 +12,7 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { environment } from '../../../environments/environment.development';
 import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-shop',
@@ -23,7 +24,8 @@ import { FormsModule } from '@angular/forms';
     ProductDiscountSliderComponent,
     FooterComponent,
     HeaderComponent,
-    FormsModule
+    FormsModule,
+    NgSelectModule
   ],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.scss']
@@ -44,6 +46,16 @@ export class ShopComponent implements OnInit {
   sortDir: string = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
+  private sliderMin = 0;
+  private sliderMax = 540;
+  selectedSort = {label: 'Default', value: ''};  // Khởi tạo giá trị mặc định
+  sortOptions = [
+    {label: 'Default', value: ''},
+    {label: 'Price: Low to High', value: 'price-asc'},
+    {label: 'Price: High to Low', value: 'price-desc'},
+    {label: 'Name: A-Z', value: 'name-asc'},
+    {label: 'Name: Z-A', value: 'name-desc'}
+  ];
 
   /**
    * Constructor tiêm các service và thông tin nền tảng cần thiết
@@ -53,20 +65,59 @@ export class ShopComponent implements OnInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private categoryService: CategoryService,
-    private productService: ProductService
+    private productService: ProductService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
+    // Đọc query params từ URL
+    this.route.queryParams.subscribe(params => {
+      // Đọc sort
+      const sortValue = params['sort'] || '';
+      if (sortValue) {
+        const option = this.sortOptions.find(opt => opt.value === sortValue);
+        if (option) {
+          this.selectedSort = option;
+          if (sortValue.includes('-')) {
+            const [sortBy, sortDir] = sortValue.split('-');
+            this.sortBy = sortBy;
+            this.sortDir = sortDir;
+          } else {
+            this.sortBy = sortValue;
+            this.sortDir = 'asc';
+          }
+        }
+      }
+
+      // Đọc page
+      const page = parseInt(params['page']) || 1;
+      this.currentPage = page;
+
+      // Đọc category
+      const categoryId = parseInt(params['category']) || 0;
+      if (categoryId > 0) {
+        this.selectedCategoryId = categoryId;
+      }
+
+      // Đọc price range
+      const qpMin = params['min_price'];
+      const qpMax = params['max_price'];
+      this.minPrice = qpMin !== undefined ? (qpMin === '' ? null : Number(qpMin)) : null;
+      this.maxPrice = qpMax !== undefined ? (qpMax === '' ? null : Number(qpMax)) : null;
+
+      // Load products sau khi đã đọc hết params
+      this.getProducts();
+    });
+
     if (isPlatformBrowser(this.platformId)) {
-      // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải
       setTimeout(() => {
         this.initializeShopJS();
       }, 0);
     }
     // Lấy dữ liệu danh mục (trang 0, giới hạn 100)
     this.getCategories(0, 100);
-    this.getProducts();
   }
 
   initializeShopJS(): void {
@@ -74,20 +125,62 @@ export class ShopComponent implements OnInit {
     if (typeof (window as any).$ !== 'undefined') {
       const $ = (window as any).$;
 
-      // Price Range Slider
-      if ($('.price-range').length) {
-        $('.price-range').slider({
+      const $slider = $('.price-range');
+      if ($slider.length) {
+        const dataMin = Number($slider.data('min')) || 0;
+        const dataMax = Number($slider.data('max')) || 540;
+        this.sliderMin = dataMin;
+        this.sliderMax = dataMax;
+
+        const startMin = this.minPrice != null ? this.minPrice : dataMin;
+        const startMax = this.maxPrice != null ? this.maxPrice : dataMax;
+
+        const formatWithDollar = (v: number) => `${v} $`;
+        const parseFromInput = (val: any, fallback: number) => {
+          const raw = String(val ?? '');
+          const cleaned = raw.replace(/[^0-9.]/g, '');
+          const num = parseFloat(cleaned);
+          return isNaN(num) ? fallback : num;
+        };
+
+        // Khởi tạo slider
+        $slider.slider({
           range: true,
-          min: 10,
-          max: 540,
-          values: [10, 540],
-          slide: function (event: any, ui: any) {
-            $('#minamount').val('$' + ui.values[0]);
-            $('#maxamount').val('$' + ui.values[1]);
+          min: dataMin,
+          max: dataMax,
+          values: [startMin, startMax],
+          slide: (event: any, ui: any) => {
+            $('#minamount').val(formatWithDollar(ui.values[0]));
+            $('#maxamount').val(formatWithDollar(ui.values[1]));
+          },
+          stop: (event: any, ui: any) => {
+            this.onPriceRangeChange(ui.values[0], ui.values[1]);
           }
         });
-        $('#minamount').val('$' + $('.price-range').slider("values", 0));
-        $('#maxamount').val('$' + $('.price-range').slider("values", 1));
+
+        // Đồng bộ input ban đầu (hiển thị kèm $)
+        $('#minamount').val(formatWithDollar(startMin)).attr('placeholder', formatWithDollar(dataMin));
+        $('#maxamount').val(formatWithDollar(startMax)).attr('placeholder', formatWithDollar(dataMax));
+
+        // Lắng nghe thay đổi từ input
+        const self = this;
+        $('#minamount, #maxamount').on('change keyup', function (e: any) {
+          if (e.type === 'change' || e.key === 'Enter') {
+            let minVal = parseFromInput($('#minamount').val(), dataMin);
+            let maxVal = parseFromInput($('#maxamount').val(), dataMax);
+            // Clamp
+            minVal = Math.max(dataMin, Math.min(minVal, dataMax));
+            maxVal = Math.max(dataMin, Math.min(maxVal, dataMax));
+            if (minVal > maxVal) {
+              const t = minVal; minVal = maxVal; maxVal = t;
+            }
+            $slider.slider('values', [minVal, maxVal]);
+            // Cập nhật lại input kèm $
+            $('#minamount').val(formatWithDollar(minVal));
+            $('#maxamount').val(formatWithDollar(maxVal));
+            self.onPriceRangeChange(minVal, maxVal);
+          }
+        });
       }
     }
   }
@@ -125,7 +218,9 @@ export class ShopComponent implements OnInit {
       this.currentPage - 1,
       this.pageSize,
       this.sortBy,
-      this.sortDir
+      this.sortDir,
+      this.minPrice,
+      this.maxPrice
     ).pipe(
       map((result: any) => {
         // Ensure products is an array
@@ -158,7 +253,7 @@ export class ShopComponent implements OnInit {
       })
     ).subscribe({
       next: (products: Product[]) => {
-        this.products = products;
+        this.products = [...products]; // luôn tạo mảng mới để Angular nhận ra thay đổi
       },
       error: (error) => {
         console.error('Error fetching products:', error);
@@ -172,6 +267,19 @@ export class ShopComponent implements OnInit {
   onCategoryChange(categoryId: number) {
     this.selectedCategoryId = categoryId;
     this.currentPage = 1;
+
+    // Cập nhật URL với category (loại bỏ nếu = 0) và reset page về 1
+    const queryParams: any = { page: 1 };
+    queryParams.category = categoryId > 0 ? categoryId : null; // null sẽ xóa param
+    // Giữ sort nếu đang dùng, nếu Default thì xóa
+    queryParams.sort = this.selectedSort?.value ? this.selectedSort.value : null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
+
     this.getProducts();
   }
 
@@ -189,8 +297,47 @@ export class ShopComponent implements OnInit {
     this.getProducts();
   }
 
+  onNgSelectSortChange(selectedOption: any) {
+    const sortValue = selectedOption?.value || '';
+    this.selectedSort = selectedOption;
+
+    // Cập nhật URL với sort (loại bỏ nếu Default) và giữ category nếu có
+    const queryParams: any = { page: 1 };
+    queryParams.sort = sortValue ? sortValue : null; // null sẽ xóa param
+    queryParams.category = this.selectedCategoryId > 0 ? this.selectedCategoryId : null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
+
+    if (sortValue && sortValue.includes('-')) {
+      const [sortBy, sortDir] = sortValue.split('-');
+      this.sortBy = sortBy;
+      this.sortDir = sortDir;
+    } else {
+      this.sortBy = sortValue;
+      this.sortDir = 'asc';
+    }
+    this.currentPage = 1;
+    this.getProducts();
+  }
+
   onPageChange(page: number) {
     this.currentPage = page;
+
+    // Cập nhật URL với page, loại bỏ sort/category nếu ở trạng thái mặc định
+    const queryParams: any = { page };
+    queryParams.category = this.selectedCategoryId > 0 ? this.selectedCategoryId : null;
+    queryParams.sort = this.selectedSort?.value ? this.selectedSort.value : null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
+
     this.getProducts();
   }
 
@@ -198,6 +345,30 @@ export class ShopComponent implements OnInit {
     this.minPrice = min;
     this.maxPrice = max;
     this.currentPage = 1;
+    this.getProducts();
+  }
+
+  onPriceRangeChange(min: number, max: number) {
+    this.minPrice = min;
+    this.maxPrice = max;
+    this.currentPage = 1;
+
+    // Cập nhật URL với min_price/max_price (xóa nếu bằng default)
+    const queryParams: any = { page: 1 };
+    const isDefaultRange = (min === this.sliderMin) && (max === this.sliderMax);
+    queryParams.min_price = isDefaultRange ? null : min;
+    queryParams.max_price = isDefaultRange ? null : max;
+
+    // Giữ category và sort nếu có
+    queryParams.category = this.selectedCategoryId > 0 ? this.selectedCategoryId : null;
+    queryParams.sort = this.selectedSort?.value ? this.selectedSort.value : null;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
+
     this.getProducts();
   }
 
@@ -258,5 +429,9 @@ export class ShopComponent implements OnInit {
     }
     // Nếu không có hình ảnh trong product_images, sử dụng thumbnail
     return product.thumbnail;
+  }
+
+  compareByValue(item1: any, item2: any): boolean {
+    return item1 && item2 && item1.value === item2.value;
   }
 }

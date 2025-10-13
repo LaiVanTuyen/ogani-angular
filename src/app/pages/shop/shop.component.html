@@ -35,7 +35,7 @@
             <h4>Price</h4>
             <div class="price-range-wrap">
               <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                   data-min="10" data-max="540">
+                   data-min="0" data-max="540">
                 <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
                 <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
                 <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
@@ -48,39 +48,39 @@
               </div>
             </div>
           </div>
-          <div class="sidebar__item sidebar__item__color--option">
+<!--          <div class="sidebar__item sidebar__item__color&#45;&#45;option">
             <h4>Colors</h4>
-            <div class="sidebar__item__color sidebar__item__color--white">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;white">
               <label for="white">
                 White
                 <input type="radio" id="white">
               </label>
             </div>
-            <div class="sidebar__item__color sidebar__item__color--gray">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;gray">
               <label for="gray">
                 Gray
                 <input type="radio" id="gray">
               </label>
             </div>
-            <div class="sidebar__item__color sidebar__item__color--red">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;red">
               <label for="red">
                 Red
                 <input type="radio" id="red">
               </label>
             </div>
-            <div class="sidebar__item__color sidebar__item__color--black">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;black">
               <label for="black">
                 Black
                 <input type="radio" id="black">
               </label>
             </div>
-            <div class="sidebar__item__color sidebar__item__color--blue">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;blue">
               <label for="blue">
                 Blue
                 <input type="radio" id="blue">
               </label>
             </div>
-            <div class="sidebar__item__color sidebar__item__color--green">
+            <div class="sidebar__item__color sidebar__item__color&#45;&#45;green">
               <label for="green">
                 Green
                 <input type="radio" id="green">
@@ -113,7 +113,7 @@
                 <input type="radio" id="tiny">
               </label>
             </div>
-          </div>
+          </div>-->
           <div class="sidebar__item">
             <div class="latest-product__text">
               <h4>Latest Products</h4>
@@ -133,25 +133,21 @@
           <div class="row">
             <div class="col-lg-4 col-md-5">
               <div class="filter__sort">
-                <span>Sort By</span>
-                <select (change)="onSortChange($event)">
-                  <option value="">Default</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="name-asc">Name: A-Z</option>
-                  <option value="name-desc">Name: Z-A</option>
-                </select>
+                <span>Sort By:</span>
+                <ng-select
+                  [items]="sortOptions"
+                  bindLabel="label"
+                  [(ngModel)]="selectedSort"
+                  (change)="onNgSelectSortChange($event)"
+                  [compareWith]="compareByValue"
+                  class="ngselect-sort"
+                  [clearable]="false">
+                </ng-select>
               </div>
             </div>
             <div class="col-lg-4 col-md-4">
               <div class="filter__found">
                 <h6>Hiển thị {{ getDisplayedProductsInfo() }} sản phẩm</h6>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-3">
-              <div class="filter__option">
-                <span class="icon_grid-2x2"></span>
-                <span class="icon_ul"></span>
               </div>
             </div>
           </div>

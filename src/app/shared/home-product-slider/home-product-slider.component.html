@@ -2,7 +2,7 @@
   <h4>{{ title }}</h4>
   <div class="latest-product__slider owl-carousel">
     <div class="latest-prdouct__slider__item" *ngFor="let group of productGroups">
-      <a *ngFor="let product of group" routerLink="/shop-details/{{product.id}}" class="latest-product__item">
+      <a *ngFor="let product of group" [routerLink]="['/product', product.id]" class="latest-product__item">
         <div class="latest-product__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}">
           <div *ngIf="product.actualSalePercent" class="product__discount__percent">
             -{{ product.actualSalePercent }}%

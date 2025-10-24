@@ -2,7 +2,7 @@
   <div class="product__discount__slider owl-carousel">
     <div class="col-lg-4" *ngFor="let product of products">
       <div class="product__discount__item">
-        <div class="product__discount__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}">
+        <div class="product__discount__item__pic" [ngStyle]="{'background-image': 'url(' + product.thumbnail + ')'}" [routerLink]="['/product', product.id]">
           <div *ngIf="product.actualSalePercent" class="product__discount__percent">
             -{{ product.actualSalePercent }}%
           </div>
@@ -14,7 +14,7 @@
         </div>
         <div class="product__discount__item__text">
           <span>{{ categories[product.category_id] || '' }}</span>
-          <h5><a [routerLink]="['/shop-details', product.id]">{{ product.name }}</a></h5>
+          <h5><a [routerLink]="['/product', product.id]">{{ product.name }}</a></h5>
           <div class="product__item__price">
             <ng-container *ngIf="product.actualSalePercent != null && product.actualSalePercent > 0; else noDiscount">
               {{ (product.price * (1 - product.actualSalePercent / 100)) | currency:'USD' }}

@@ -1,5 +1,6 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ElementRef, Input } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { ProductImage } from '../../models/product.image';
 
 declare var $: any;
 
@@ -10,6 +11,7 @@ declare var $: any;
   templateUrl: './product-details-pic-slider.component.html'
 })
 export class ProductDetailsPicSliderComponent implements OnInit {
+  @Input() productImages: ProductImage[] = [];
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,

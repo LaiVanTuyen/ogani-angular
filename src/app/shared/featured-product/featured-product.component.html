@@ -19,7 +19,8 @@
     <div class="row featured__filter">
       <div *ngFor="let product of products" class="col-lg-3 col-md-4 col-sm-6 mix {{ getProductCategoryClasses(product) }}">
         <div class="featured__item">
-          <div class="featured__item__pic" [ngStyle]="{'background-image': 'url(' + getProductImageUrl(product) + ')', 'background-size': 'contain', 'background-repeat': 'no-repeat', 'background-position': 'center'}">
+          <div class="featured__item__pic" [ngStyle]="{'background-image': 'url(' + getProductImageUrl(product) + ')', 'background-size': 'contain', 'background-repeat': 'no-repeat', 'background-position': 'center'}"
+               [routerLink]="['/product', product.id]">
             <div *ngIf="product.actualSalePercent" class="product__discount__percent">
               -{{ product.actualSalePercent }}%
             </div>
@@ -30,7 +31,7 @@
             </ul>
           </div>
           <div class="featured__item__text">
-            <h6><a href="#">{{ product.name }}</a></h6>
+            <h6><a [routerLink]="['/product', product.id]">{{ product.name }}</a></h6>
             <h5 *ngIf="product.actualSalePercent; else noDiscount">
               {{ (product.price * (1 - product.actualSalePercent / 100)) | currency:'USD' }}
               <span style="text-decoration: line-through; color: #888; font-size: 13px; margin-left: 4px;">

@@ -1,7 +1,7 @@
 /**
  * Import các thư viện cần thiết từ Angular và các thư viện bên thứ ba
  */
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, EventEmitter, Input, Output } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import {Category} from "../../models/category";
 import {CategoryService} from "../../services/category.service";
@@ -32,7 +32,8 @@ export class CategoriesSliderComponent implements OnInit {
   /**
    * Mảng lưu trữ dữ liệu danh mục được lấy từ API
    */
-  categories: Category[] = []; // Dữ liệu động từ categoryService
+  @Input() categories: Category[] = []; // Dữ liệu động từ categoryService
+  @Output() categoryClick = new EventEmitter<number>();
 
   /**
    * Constructor tiêm các service và thông tin nền tảng cần thiết
@@ -142,5 +143,12 @@ export class CategoriesSliderComponent implements OnInit {
       ? image  // Nếu là URL đầy đủ, sử dụng nguyên bản
       : `${environment.apiBaseUrl}/categories/images/${image}`;  // Nếu không, thêm vào URL cơ sở API
   }
-}
 
+  /**
+   * Phát ra sự kiện khi một danh mục được nhấp vào
+   * @param categoryId - ID của danh mục được nhấp
+   */
+  onCategoryClick(categoryId: number): void {
+    this.categoryClick.emit(categoryId);
+  }
+}

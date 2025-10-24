@@ -10,6 +10,9 @@ export interface Product {
   url: string;
   product_images: ProductImage[];
   actualSalePercent?: number;
+  availability: string;
+  // optional: populated from CommentStats API when available
+  reviewCount?: number;
+  avgRating?: number;
+
 }
-
-

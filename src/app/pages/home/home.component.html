@@ -19,7 +19,7 @@
 <!--          </ul>-->
           <ul class="hero__categories__menu">
             <li *ngFor="let category of categories">
-              <a [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
+              <a href="#" (click)="onCategoryClick(category.id); $event.preventDefault()">{{ category.name }}</a>
             </li>
           </ul>
         </div>
@@ -51,7 +51,7 @@
             <span>FRUIT FRESH</span>
             <h2>Vegetable <br />100% Organic</h2>
             <p>Free Pickup and Delivery Available</p>
-            <a routerLink="/shop" class="primary-btn">SHOP NOW</a>
+            <a routerLink="/products" class="primary-btn">SHOP NOW</a>
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
 <!-- Categories Section Begin -->
 <section class="categories">
     <div class="container">
-    <app-categories-slider ngSkipHydration></app-categories-slider>
+    <app-categories-slider (categoryClick)="onCategoryClick($event)" ngSkipHydration></app-categories-slider>
 
     </div>
 </section>

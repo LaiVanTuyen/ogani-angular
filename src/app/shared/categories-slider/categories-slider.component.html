@@ -4,9 +4,8 @@
       <div class="categories__item">
         <div class="categories__item-image" [style.backgroundImage]="'url(' + category.image + ')'">
         </div>
-        <h5><a [routerLink]="['/shop']" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a></h5>
+        <h5><a href="#" (click)="onCategoryClick(category.id); $event.preventDefault()">{{ category.name }}</a></h5>
       </div>
     </div>
   </div>
 </div>
-

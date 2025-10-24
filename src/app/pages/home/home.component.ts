@@ -31,6 +31,10 @@ export class HomeComponent implements OnInit {
     this.localStorage = document.defaultView?.localStorage;
   }
 
+  onCategoryClick(categoryId: number) {
+    this.router.navigate(['/products'], { queryParams: { category: categoryId } });
+  }
+
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       // Sử dụng setTimeout để đảm bảo JavaScript chạy sau khi DOM đã tải

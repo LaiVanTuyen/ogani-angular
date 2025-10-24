@@ -1,15 +1,8 @@
-<div class="product__details__pic__item">
+<div class="product__details__pic__item" *ngIf="productImages.length > 0">
     <img class="product__details__pic__item--large"
-        src="assets/img/product/details/product-details-1.jpg" alt="">
+         [src]="productImages[0].image_url" alt="">
 </div>
-<div class="product__details__pic__slider owl-carousel">
-    <img data-imgbigurl="assets/img/product/details/product-details-2.jpg"
-        src="assets/img/product/details/thumb-1.jpg" alt="">
-    <img data-imgbigurl="assets/img/product/details/product-details-3.jpg"
-        src="assets/img/product/details/thumb-2.jpg" alt="">
-    <img data-imgbigurl="assets/img/product/details/product-details-5.jpg"
-        src="assets/img/product/details/thumb-3.jpg" alt="">
-    <img data-imgbigurl="assets/img/product/details/product-details-4.jpg"
-        src="assets/img/product/details/thumb-4.jpg" alt="">
+<div class="product__details__pic__slider owl-carousel" *ngIf="productImages.length > 0">
+    <img *ngFor="let image of productImages" [attr.data-imgbigurl]="image.image_url"
+         [src]="image.image_url" alt="">
 </div>
-

@@ -7,11 +7,12 @@ import {Product} from "../../models/product";
 import {ProductService} from "../../services/product.service";
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-featured-product',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './featured-product.component.html',
   styleUrls: ['./featured-product.component.scss']
 })
